@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Class Timetable | BSCS 5A · Air University</title>
+  <meta name="description" content="Official Class Timetable for BSCS 5th Semester Section 5A, Air University. Built with Bootstrap 5.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #f0f4f8; }
+
+    /* Navbar */
+    .lab-navbar { background: linear-gradient(135deg, #1e3a5f 0%, #0d6efd 100%); }
+
+    /* Header Banner */
+    .header-banner {
+      background: linear-gradient(135deg, #1e3a5f 0%, #1565c0 60%, #0d6efd 100%);
+      border-radius: 16px;
+      padding: 2rem 2.5rem;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .header-banner::before {
+      content: 'AU';
+      position: absolute; right: 2rem; top: 50%;
+      transform: translateY(-50%);
+      font-size: 7rem; font-weight: 900;
+      color: rgba(255,255,255,0.06); pointer-events: none;
+    }
+    .au-emblem {
+      width: 64px; height: 64px;
+      background: rgba(255,255,255,0.15);
+      border: 2px solid rgba(255,255,255,0.35);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; font-weight: 800; color: #fff;
+      backdrop-filter: blur(4px);
+    }
+
+    /* Stats Cards */
+    .stat-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      border-left: 4px solid #0d6efd;
+      box-shadow: 0 2px 12px rgba(13,110,253,0.08);
+      transition: transform .2s;
+    }
+    .stat-card:hover { transform: translateY(-3px); }
+    .stat-num { font-size: 2rem; font-weight: 800; color: #0d6efd; }
+
+    /* Timetable Card */
+    .table-card { background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); overflow: hidden; }
+    .timetable thead th { background: #1e3a5f; color: #fff; border: none; font-size: .8rem; text-transform: uppercase; letter-spacing: .8px; vertical-align: middle; }
+    .timetable tbody tr { transition: background .15s; }
+    .timetable tbody tr:hover td { background: #f0f6ff !important; }
+    .timetable .day-cell { background: #1565c0 !important; color: #fff; font-weight: 700; font-size: .9rem; min-width: 80px; }
+    .timetable .break-cell { background: #fff9e6; text-align: center; vertical-align: middle; }
+
+    /* Course Slots */
+    .course-slot { border-radius: 8px; padding: .55rem .75rem; min-height: 76px; }
+    .subject-web   { background: #e0f0ff; border-left: 3px solid #0d6efd; }
+    .subject-os    { background: #f5e6ff; border-left: 3px solid #9c27b0; }
+    .subject-se    { background: #e6fff0; border-left: 3px solid #198754; }
+    .subject-algo  { background: #fff3e0; border-left: 3px solid #fd7e14; }
+    .subject-auto  { background: #ffe6f0; border-left: 3px solid #e91e63; }
+    .subject-weblab{ background: #e3f6fd; border-left: 3px solid #0dcaf0; }
+    .subject-oslab { background: #f3e6ff; border-left: 3px solid #6f42c1; }
+    .lab-flag { font-size: .65rem; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; color: #0d6efd; margin-bottom: 2px; }
+    .free-slot { border-radius: 8px; padding: .55rem .75rem; background: #f8f9fa; border: 1px dashed #ced4da; min-height: 76px; display: flex; flex-direction: column; justify-content: center; }
+    .course-code { font-size: .65rem; font-weight: 700; opacity: .7; }
+    .course-title { font-size: .82rem; font-weight: 600; line-height: 1.3; }
+    .course-meta { font-size: .7rem; color: #6c757d; margin-top: 2px; }
+
+    /* Today highlight */
+    .today-highlight td { background: #fffbea !important; box-shadow: inset 0 0 0 2px #ffc107; }
+    .today-highlight .day-cell { background: #ff9800 !important; }
+
+    /* Directory Cards */
+    .dir-card { border-radius: 12px; padding: 1.25rem; height: 100%; transition: transform .2s, box-shadow .2s; cursor: default; }
+    .dir-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+
+    /* Print */
+    @media print { .lab-navbar, .no-print { display: none !important; } body { background: #fff; } }
+    @media (max-width: 768px) { .header-banner::before { display: none; } }
+  </style>
+</head>
+<body>
+
+  <!-- Bootstrap Navbar -->
+  <nav class="navbar navbar-expand-lg lab-navbar sticky-top">
+    <div class="container-fluid px-3">
+      <span class="navbar-brand text-white fw-bold">
+        <span class="badge bg-warning text-dark me-2">Lab 2 · Task 1</span>
+        Class Timetable
+      </span>
+      <button class="navbar-toggler border-light" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navLinks">
+        <div class="navbar-nav ms-auto gap-1">
+          <a class="nav-link text-white-50" href="../index.html"><i class="bi bi-house-fill me-1"></i>Hub</a>
+          <a class="nav-link text-white active" href="index.html">Task 1</a>
+          <a class="nav-link text-white-50" href="../task2-facebook/index.html">Task 2</a>
+          <a class="nav-link text-white-50" href="../task3-portfolio/index.html">Task 3</a>
+          <a class="nav-link text-white-50" href="../task4-custom-ui/index.html">Task 4</a>
+          <a class="nav-link text-white-50" href="../task5-ieee-paper/index.html">Task 5</a>
+          <a class="nav-link text-white-50" href="../task6-ecommerce/index.html">Task 6</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-xl py-4 px-3 px-md-4">
+
+    <!-- Header Banner -->
+    <div class="header-banner mb-4">
+      <div class="d-flex align-items-center gap-3 flex-wrap">
+        <div class="au-emblem">AU</div>
+        <div>
+          <div class="fw-semibold opacity-75 small mb-1">Air University, Islamabad &nbsp;·&nbsp; Department of Computer Science</div>
+          <h1 class="fw-bold fs-3 mb-1">Class Timetable — Fall 2026</h1>
+          <div class="d-flex flex-wrap gap-2 mt-2">
+            <span class="badge bg-white text-primary">BSCS · 5th Semester</span>
+            <span class="badge bg-white text-success">Section 5A</span>
+            <span class="badge bg-white text-dark">Roman Fatima (241878)</span>
+          </div>
+        </div>
+        <div class="ms-auto d-flex gap-2 flex-wrap no-print">
+          <button class="btn btn-light btn-sm fw-semibold" onclick="window.print()">
+            <i class="bi bi-printer-fill me-1"></i>Print
+          </button>
+          <button class="btn btn-warning btn-sm fw-semibold" id="highlightTodayBtn">
+            <i class="bi bi-geo-alt-fill me-1"></i>Highlight Today
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-md-3">
+        <div class="stat-card text-center">
+          <div class="stat-num">5</div>
+          <div class="text-muted small fw-semibold">Theory Courses</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card text-center" style="border-color:#198754">
+          <div class="stat-num text-success">2</div>
+          <div class="text-muted small fw-semibold">Hands-on Labs</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card text-center" style="border-color:#fd7e14">
+          <div class="stat-num text-warning">17</div>
+          <div class="text-muted small fw-semibold">Credit Hours</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card text-center" style="border-color:#e91e63">
+          <div class="stat-num" style="color:#e91e63">5</div>
+          <div class="text-muted small fw-semibold">Days (Mon–Fri)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day Filter -->
+    <div class="d-flex align-items-center flex-wrap gap-2 mb-3 no-print">
+      <span class="fw-semibold text-secondary small">Filter by Day:</span>
+      <div class="btn-group" id="dayFilter" role="group">
+        <button class="btn btn-primary btn-sm active" data-day="all">All Days</button>
+        <button class="btn btn-outline-primary btn-sm" data-day="mon">Mon</button>
+        <button class="btn btn-outline-primary btn-sm" data-day="tue">Tue</button>
+        <button class="btn btn-outline-primary btn-sm" data-day="wed">Wed</button>
+        <button class="btn btn-outline-primary btn-sm" data-day="thu">Thu</button>
+        <button class="btn btn-outline-primary btn-sm" data-day="fri">Fri</button>
+      </div>
+    </div>
+
+    <!-- Timetable -->
+    <div class="table-card mb-4">
+      <div class="table-responsive">
+        <table class="table timetable table-bordered align-middle mb-0" id="mainTimetable">
+          <caption class="caption-top px-3 pt-2 pb-1 text-muted small">Weekly Academic Schedule — BSCS Section 5A · Fall 2026</caption>
+          <thead>
+            <tr>
+              <th scope="col" style="min-width:90px">Day / Time</th>
+              <th scope="col"><div class="small fw-bold">Slot 1</div><div class="opacity-75" style="font-size:.72rem">08:30–10:00</div></th>
+              <th scope="col"><div class="small fw-bold">Slot 2</div><div class="opacity-75" style="font-size:.72rem">10:00–11:30</div></th>
+              <th scope="col"><div class="small fw-bold">Slot 3</div><div class="opacity-75" style="font-size:.72rem">11:30–01:00</div></th>
+              <th scope="col" style="min-width:80px"><div class="small fw-bold">Break</div><div class="opacity-75" style="font-size:.72rem">01:00–02:00</div></th>
+              <th scope="col"><div class="small fw-bold">Slot 4</div><div class="opacity-75" style="font-size:.72rem">02:00–03:30</div></th>
+              <th scope="col"><div class="small fw-bold">Slot 5</div><div class="opacity-75" style="font-size:.72rem">03:30–05:00</div></th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- MONDAY -->
+            <tr data-day="mon" id="row-mon">
+              <td class="day-cell text-center">
+                <div>Monday</div><small class="opacity-75">MON</small>
+              </td>
+              <td><div class="course-slot subject-web">
+                <div class="lab-flag">CS311 · 3 Cr</div>
+                <div class="course-title">Web Technologies</div>
+                <div class="course-meta"><i class="bi bi-geo-alt"></i> Room 304 &nbsp;<i class="bi bi-person-fill"></i> Dr. Tariq</div>
+              </div></td>
+              <td><div class="course-slot subject-os">
+                <div class="lab-flag">CS312 · 3 Cr</div>
+                <div class="course-title">Operating Systems</div>
+                <div class="course-meta"><i class="bi bi-geo-alt"></i> Room 201 &nbsp;<i class="bi bi-person-fill"></i> Dr. Kamran</div>
+              </div></td>
+              <td><div class="free-slot">
+                <span class="fw-semibold text-muted small">Free Slot</span>
+                <span class="text-muted" style="font-size:.72rem">Self Study / Library</span>
+              </div></td>
+              <td class="break-cell text-center" rowspan="5">
+                <div class="d-flex flex-column align-items-center gap-1">
+                  <i class="bi bi-cup-hot fs-4 text-warning"></i>
+                  <small class="fw-bold text-muted" style="writing-mode:vertical-rl; transform:rotate(180deg); letter-spacing:2px;">LUNCH &amp; PRAYER</small>
+                </div>
+              </td>
+              <td colspan="2"><div class="course-slot subject-weblab">
+                <div class="lab-flag">🔬 CS311L · 3-HR LAB</div>
+                <div class="course-title">Web Technologies Lab (HTML, CSS &amp; JS)</div>
+                <div class="course-meta"><i class="bi bi-pc-display"></i> CS Lab 3 &nbsp;<i class="bi bi-person-fill"></i> Engr. Usama</div>
+              </div></td>
+            </tr>
+            <!-- TUESDAY -->
+            <tr data-day="tue" id="row-tue">
+              <td class="day-cell text-center">
+                <div>Tuesday</div><small class="opacity-75">TUE</small>
+              </td>
+              <td><div class="course-slot subject-se">
+                <div class="lab-flag">CS313 · 3 Cr</div>
+                <div class="course-title">Software Engineering</div>
+                <div class="course-meta"><i class="bi bi-geo-alt"></i> Room 302 &nbsp;<i class="bi bi-person-fill"></i> Dr. Ayesha</div>
+              </div></td>
+              <td><div class="course-slot subject-algo">
+                <div class="lab-flag">CS314 · 3 Cr</div>
+                <div class="course-title">Design &amp; Analysis of Algorithms</div>
+                <div class="course-meta"><i class="bi bi-geo-alt"></i> Room 105 &nbsp;<i class="bi bi-person-fill"></i> Dr. Farooq</div>
+              </div></td>
+              <td><div class="course-slot subject-auto">
+                <div class="lab-flag">CS315 · 3 Cr</div>
+                <div class="course-title">Theory of Automata</div>
+                <div class="course-meta"><i class="bi bi-geo-alt"></i> Room 206 &nbsp;<i class="bi bi-person-fill"></i> Dr. Noman</div>
+              </div></td>
+              <td><div class="course-slot subject-web">
+                <div class="lab-flag">CS311 Tutorial</div>
+                <div class="course-title">Web Technologies</div>
+                <div class="course-meta"><i class="bi bi-geo-alt"></i> Room 304</div>
+              </div></td>
+              <td><div class="free-slot">
+                <span class="fw-semibold text-muted small">Sports / Society</span>
+                <span class="text-muted" style="font-size:.72rem">Student Activity Hour</span>
+              </div></td>
+            </tr>
+            <!-- WEDNESDAY -->
+            <tr data-day="wed" id="row-wed">
+              <td class="day-cell text-center">
+                <div>Wednesday</div><small class="opacity-75">WED</small>
+              </td>
+              <td><div class="course-slot subject-algo">
+                <div class="lab-flag">CS314 · 3 Cr</div>
+                <div class="course-title">Design &amp; Analysis of Algorithms</div>
+                <div class="course-meta"><i class="bi bi-geo-alt"></i> Room 105 &nbsp;<i class="bi bi-person-fill"></i> Dr. Farooq</div>
+              </div></td>
+              <td><div class="course-slot subject-se">
+                <div class="lab-flag">CS313 · 3 Cr</div>
+                <div class="course-title">Software Engineering</div>
+                <div class="course-meta"><i class="bi bi-geo-alt"></i> Room 302 &nbsp;<i class="bi bi-person-fill"></i> Dr. Ayesha</div>
+              </div></td>
+              <td><div class="course-slot subject-os">
+                <div class="lab-flag">CS312 · 3 Cr</div>
+                <div class="course-title">Operating Systems</div>
+                <div class="course-meta"><i class="bi bi-geo-alt"></i> Room 201 &nbsp;<i class="bi bi-person-fill"></i> Dr. Kamran</div>
+              </div></td>
+              <td colspan="2"><div class="course-slot subject-oslab">
+                <div class="lab-flag">🔬 CS312L · 3-HR LAB</div>
+                <div class="course-title">Operating Systems Lab (Linux &amp; Bash)</div>
+                <div class="course-meta"><i class="bi bi-pc-display"></i> Software Lab 1 &nbsp;<i class="bi bi-person-fill"></i> Engr. Bilal</div>
+              </div></td>
+            </tr>
+            <!-- THURSDAY -->
+            <tr data-day="thu" id="row-thu">
+              <td class="day-cell text-center">
+                <div>Thursday</div><small class="opacity-75">THU</small>
+              </td>
+              <td><div class="course-slot subject-auto">
+                <div class="lab-flag">CS315 · 3 Cr</div>
+                <div class="course-title">Theory of Automata</div>
+                <div class="course-meta"><i class="bi bi-geo-alt"></i> Room 206 &nbsp;<i class="bi bi-person-fill"></i> Dr. Noman</div>
+              </div></td>
+              <td><div class="course-slot subject-web">
+                <div class="lab-flag">CS311 · 3 Cr</div>
+                <div class="course-title">Web Technologies</div>
+                <div class="course-meta"><i class="bi bi-geo-alt"></i> Room 304 &nbsp;<i class="bi bi-person-fill"></i> Dr. Tariq</div>
+              </div></td>
+              <td><div class="course-slot subject-se">
+                <div class="lab-flag">CS313 · 3 Cr</div>
+                <div class="course-title">Software Engineering</div>
+                <div class="course-meta"><i class="bi bi-geo-alt"></i> Room 302 &nbsp;<i class="bi bi-person-fill"></i> Dr. Ayesha</div>
+              </div></td>
+              <td><div class="course-slot subject-os">
+                <div class="lab-flag">CS312 Discussion</div>
+                <div class="course-title">Operating Systems</div>
+                <div class="course-meta"><i class="bi bi-geo-alt"></i> Room 201 &nbsp;<i class="bi bi-person-fill"></i> Dr. Kamran</div>
+              </div></td>
+              <td><div class="free-slot">
+                <span class="fw-semibold text-muted small">Free Slot</span>
+                <span class="text-muted" style="font-size:.72rem">Consultation Hour</span>
+              </div></td>
+            </tr>
+            <!-- FRIDAY -->
+            <tr data-day="fri" id="row-fri">
+              <td class="day-cell text-center">
+                <div>Friday</div><small class="opacity-75">FRI</small>
+              </td>
+              <td><div class="course-slot subject-algo">
+                <div class="lab-flag">CS314 · 3 Cr</div>
+                <div class="course-title">Design &amp; Analysis of Algorithms</div>
+                <div class="course-meta"><i class="bi bi-geo-alt"></i> Room 105 &nbsp;<i class="bi bi-person-fill"></i> Dr. Farooq</div>
+              </div></td>
+              <td><div class="course-slot subject-auto">
+                <div class="lab-flag">CS315 · 3 Cr</div>
+                <div class="course-title">Theory of Automata</div>
+                <div class="course-meta"><i class="bi bi-geo-alt"></i> Room 206 &nbsp;<i class="bi bi-person-fill"></i> Dr. Noman</div>
+              </div></td>
+              <td><div class="free-slot">
+                <span class="fw-semibold text-muted small">Friday Prayers</span>
+                <span class="text-muted" style="font-size:.72rem">Auditorium / Mosque</span>
+              </div></td>
+              <td colspan="2"><div class="free-slot" style="background:#fffde7; border-color:#ffc107">
+                <span class="fw-semibold small" style="color:#f57c00">🌟 Weekend Sprint &amp; Project Work</span>
+                <span class="text-muted" style="font-size:.72rem">Web Dev Lab 2 Group Assignments</span>
+              </div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Course Directory Cards -->
+    <h2 class="fw-bold mb-3" style="font-size:1.25rem">
+      <i class="bi bi-journal-bookmark-fill text-primary me-2"></i>Enrolled Courses &amp; Faculty Directory
+    </h2>
+    <div class="row g-3 mb-5">
+      <div class="col-sm-6 col-lg-4">
+        <div class="dir-card h-100" style="background:#e0f0ff; border-left:4px solid #0d6efd">
+          <div class="d-flex justify-content-between mb-2">
+            <span class="badge bg-primary">CS311 · 3 Cr</span>
+            <span class="badge bg-secondary">Theory</span>
+          </div>
+          <h5 class="fw-bold">Web Technologies</h5>
+          <p class="small text-muted">Semantic HTML5, CSS3, JavaScript ES6+, DOM manipulation, Responsive Design.</p>
+          <div class="small"><i class="bi bi-person-fill text-primary"></i> Dr. Tariq Mahmood &nbsp; <i class="bi bi-geo-alt text-primary"></i> Room 304</div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-4">
+        <div class="dir-card h-100" style="background:#e3f6fd; border-left:4px solid #0dcaf0">
+          <div class="d-flex justify-content-between mb-2">
+            <span class="badge bg-info text-dark">CS311L · 1 Cr</span>
+            <span class="badge bg-success">Practical Lab</span>
+          </div>
+          <h5 class="fw-bold">Web Technologies Lab</h5>
+          <p class="small text-muted">Hands-on front-end dev, Git workflows, UI clones, portfolio & custom CSS.</p>
+          <div class="small"><i class="bi bi-person-fill text-info"></i> Engr. Usama &nbsp; <i class="bi bi-pc-display text-info"></i> CS Lab 3</div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-4">
+        <div class="dir-card h-100" style="background:#f5e6ff; border-left:4px solid #9c27b0">
+          <div class="d-flex justify-content-between mb-2">
+            <span class="badge" style="background:#9c27b0">CS312 · 3 Cr</span>
+            <span class="badge bg-secondary">Theory</span>
+          </div>
+          <h5 class="fw-bold">Operating Systems</h5>
+          <p class="small text-muted">Process management, CPU scheduling, memory virtualization & file systems.</p>
+          <div class="small"><i class="bi bi-person-fill" style="color:#9c27b0"></i> Dr. Kamran Malik &nbsp; <i class="bi bi-geo-alt" style="color:#9c27b0"></i> Room 201</div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-4">
+        <div class="dir-card h-100" style="background:#e6fff0; border-left:4px solid #198754">
+          <div class="d-flex justify-content-between mb-2">
+            <span class="badge bg-success">CS313 · 3 Cr</span>
+            <span class="badge bg-secondary">Theory</span>
+          </div>
+          <h5 class="fw-bold">Software Engineering</h5>
+          <p class="small text-muted">Agile & Scrum, requirements elicitation, UML, architectural patterns & QA.</p>
+          <div class="small"><i class="bi bi-person-fill text-success"></i> Dr. Ayesha Siddiqa &nbsp; <i class="bi bi-geo-alt text-success"></i> Room 302</div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-4">
+        <div class="dir-card h-100" style="background:#fff3e0; border-left:4px solid #fd7e14">
+          <div class="d-flex justify-content-between mb-2">
+            <span class="badge bg-warning text-dark">CS314 · 3 Cr</span>
+            <span class="badge bg-secondary">Theory</span>
+          </div>
+          <h5 class="fw-bold">Design &amp; Analysis of Algorithms</h5>
+          <p class="small text-muted">Complexity notation, divide-and-conquer, greedy, dynamic programming & graphs.</p>
+          <div class="small"><i class="bi bi-person-fill text-warning"></i> Dr. Farooq Khan &nbsp; <i class="bi bi-geo-alt text-warning"></i> Room 105</div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-4">
+        <div class="dir-card h-100" style="background:#ffe6f0; border-left:4px solid #e91e63">
+          <div class="d-flex justify-content-between mb-2">
+            <span class="badge" style="background:#e91e63">CS315 · 3 Cr</span>
+            <span class="badge bg-secondary">Theory</span>
+          </div>
+          <h5 class="fw-bold">Theory of Automata</h5>
+          <p class="small text-muted">DFA/NFA, regular expressions, context-free grammars & Turing machines.</p>
+          <div class="small"><i class="bi bi-person-fill" style="color:#e91e63"></i> Dr. Noman Ahmed &nbsp; <i class="bi bi-geo-alt" style="color:#e91e63"></i> Room 206</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-muted py-3 border-top small">
+      <p class="mb-1">Department of Computer Science · Air University, Islamabad · Academic Year 2026–2027</p>
+      <p class="mb-0">Submitted by <strong>Roman Fatima (Reg No: 241878)</strong> · BSCS 5A · Web Development Lab 2 (Task 1)</p>
+    </footer>
+
+  </div>
+
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Day Filter
+    const filterBtns = document.querySelectorAll('#dayFilter button');
+    const rows = document.querySelectorAll('#mainTimetable tbody tr');
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => { b.classList.remove('active','btn-primary'); b.classList.add('btn-outline-primary'); });
+        btn.classList.add('active','btn-primary'); btn.classList.remove('btn-outline-primary');
+        const day = btn.dataset.day;
+        rows.forEach(r => { r.style.display = (day === 'all' || r.dataset.day === day) ? '' : 'none'; });
+      });
+    });
+
+    // Highlight Today
+    document.getElementById('highlightTodayBtn').addEventListener('click', () => {
+      const map = {1:'row-mon',2:'row-tue',3:'row-wed',4:'row-thu',5:'row-fri'};
+      const todayId = map[new Date().getDay()] || 'row-mon';
+      rows.forEach(r => r.classList.remove('today-highlight'));
+      const el = document.getElementById(todayId);
+      if (el) { el.classList.add('today-highlight'); el.scrollIntoView({behavior:'smooth',block:'center'}); }
+    });
+  </script>
+</body>
+</html>

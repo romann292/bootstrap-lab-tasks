@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Facebook | Roman Fatima (BSCS 5A)</title>
+  <meta name="description" content="Facebook Home Page Clone with Bootstrap 5 for Web Development Lab 2.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root { --fb-blue: #0866ff; --fb-bg: #f0f2f5; --fb-card: #fff; }
+    body { font-family: 'Inter', sans-serif; background: var(--fb-bg); color: #1c1e21; }
+
+    /* FB Header */
+    .fb-header {
+      background: #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      position: sticky; top: 0; z-index: 1030;
+      height: 56px;
+    }
+    .fb-header .container-fluid { height: 100%; }
+    .fb-logo-svg { width: 40px; height: 40px; }
+    .fb-search-input {
+      background: var(--fb-bg);
+      border: none; border-radius: 50px;
+      padding: .45rem 1rem .45rem 2.5rem;
+      font-size: .9rem; outline: none; width: 240px;
+    }
+    .fb-search-wrap { position: relative; }
+    .fb-search-wrap .bi-search { position: absolute; left: .8rem; top: 50%; transform: translateY(-50%); color: #65676b; }
+
+    /* Nav tabs */
+    .fb-nav-tab {
+      display: flex; align-items: center; justify-content: center;
+      width: 110px; height: 50px; border-radius: 8px;
+      color: #65676b; font-size: 1.4rem; cursor: pointer;
+      border: none; background: transparent;
+      transition: background .15s;
+      position: relative;
+    }
+    .fb-nav-tab:hover { background: var(--fb-bg); }
+    .fb-nav-tab.active { color: var(--fb-blue); }
+    .fb-nav-tab.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: var(--fb-blue); border-radius: 3px 3px 0 0; }
+
+    /* Right icons */
+    .fb-icon-btn {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--fb-bg);
+      border: none; color: #050505;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; cursor: pointer; transition: background .15s;
+    }
+    .fb-icon-btn:hover { background: #e4e6eb; }
+
+    /* Stories */
+    .story-card {
+      width: 110px; min-width: 110px; height: 200px;
+      border-radius: 12px; overflow: hidden; position: relative; cursor: pointer;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      transition: transform .2s;
+      flex-shrink: 0;
+    }
+    .story-card:hover { transform: scale(1.03); }
+    .story-avatar {
+      width: 42px; height: 42px; border-radius: 50%;
+      border: 3px solid var(--fb-blue);
+      position: absolute; top: 10px; left: 10px;
+      background: #fff; display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 1rem;
+    }
+    .story-name {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 8px; font-size: .75rem; font-weight: 600;
+      color: #fff; background: linear-gradient(transparent, rgba(0,0,0,.5));
+    }
+    .story-add {
+      background: #fff !important;
+      border: 1px solid #ddd !important;
+    }
+    .story-add .add-icon {
+      width: 42px; height: 42px; border-radius: 50%;
+      background: var(--fb-blue); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; position: absolute; top: 10px; left: 10px;
+    }
+    .story-add .story-name { color: #050505; background: linear-gradient(transparent, rgba(255,255,255,.9)); }
+
+    /* Post Composer */
+    .post-composer {
+      background: #fff; border-radius: 8px; padding: 1rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+    .post-input {
+      background: var(--fb-bg); border: none; border-radius: 50px;
+      padding: .6rem 1rem; width: 100%; font-size: .95rem;
+      cursor: pointer; outline: none;
+      transition: background .15s;
+    }
+    .post-input:hover { background: #e4e6eb; }
+    .post-action-btn {
+      display: flex; align-items: center; gap: .5rem;
+      font-weight: 600; font-size: .87rem; color: #65676b;
+      padding: .5rem .75rem; border-radius: 8px; cursor: pointer;
+      border: none; background: transparent; transition: background .15s;
+    }
+    .post-action-btn:hover { background: var(--fb-bg); }
+
+    /* Feed Post Card */
+    .post-card {
+      background: #fff; border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      overflow: hidden; margin-bottom: 1rem;
+    }
+    .post-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, #0d6efd, #6610f2);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: .9rem; flex-shrink: 0;
+    }
+    .post-reactions {
+      display: flex; gap: 4px; align-items: center;
+      font-size: .85rem; color: #65676b;
+    }
+    .reaction-emoji { font-size: 1rem; }
+    .post-action-bar button {
+      flex: 1; border: none; background: transparent;
+      padding: .5rem; border-radius: 4px; font-size: .9rem;
+      font-weight: 600; color: #65676b; cursor: pointer;
+      transition: background .15s;
+    }
+    .post-action-bar button:hover { background: var(--fb-bg); }
+
+    /* Post image */
+    .post-image {
+      width: 100%; aspect-ratio: 16/9; object-fit: cover;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    /* Left Sidebar */
+    .sidebar-link {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .5rem .75rem; border-radius: 8px; cursor: pointer;
+      font-size: .95rem; font-weight: 500; color: #050505;
+      text-decoration: none; transition: background .15s;
+    }
+    .sidebar-link:hover { background: var(--fb-bg); color: #050505; }
+    .sidebar-link .link-icon {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    /* Right Sidebar */
+    .friend-row {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .4rem .5rem; border-radius: 8px; cursor: pointer;
+      transition: background .15s;
+    }
+    .friend-row:hover { background: var(--fb-bg); }
+    .friend-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; color: #fff; font-size: .85rem; flex-shrink: 0;
+      position: relative;
+    }
+    .online-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: #31a24c; border: 2px solid #fff;
+      position: absolute; bottom: 0; right: 0;
+    }
+
+    /* Lab Banner */
+    .lab-banner { background: #1e3a5f; color: #fff; font-size: .8rem; padding: .4rem 1rem; }
+
+    /* Messenger dock */
+    .messenger-dock {
+      position: fixed; bottom: 1rem; right: 1rem;
+      display: flex; flex-direction: column; align-items: flex-end; gap: .5rem; z-index: 999;
+    }
+    .messenger-btn {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--fb-blue); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; cursor: pointer; box-shadow: 0 4px 12px rgba(8,102,255,.4);
+      border: none; transition: transform .2s;
+    }
+    .messenger-btn:hover { transform: scale(1.08); }
+
+    /* Post image placeholder */
+    .fake-img {
+      width: 100%; aspect-ratio: 16/9;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3rem;
+    }
+
+    @media (max-width: 991px) { .fb-nav-tab { width: 70px; } .fb-search-input { width: 180px; } }
+    @media (max-width: 767px) { .fb-nav-tab { width: 52px; } .fb-search-input { width: 130px; } }
+  </style>
+</head>
+<body>
+
+  <!-- Lab Assignment Banner -->
+  <div class="lab-banner d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <span><span class="badge bg-warning text-dark me-2">Lab 2 · Task 2</span> Facebook Clone (Bootstrap 5) · <strong>Roman Fatima (241878)</strong></span>
+    <div class="d-flex gap-2 flex-wrap">
+      <a href="../index.html" class="btn btn-outline-light btn-sm">🏠 Hub</a>
+      <a href="../task1-timetable/index.html" class="btn btn-outline-light btn-sm">Task 1</a>
+      <a href="../task3-portfolio/index.html" class="btn btn-outline-light btn-sm">Task 3</a>
+      <a href="../task4-custom-ui/index.html" class="btn btn-outline-light btn-sm">Task 4</a>
+      <a href="../task5-ieee-paper/index.html" class="btn btn-outline-light btn-sm">Task 5</a>
+      <a href="../task6-ecommerce/index.html" class="btn btn-outline-light btn-sm">Task 6</a>
+    </div>
+  </div>
+
+  <!-- FB Header -->
+  <header class="fb-header">
+    <div class="container-fluid px-3 d-flex align-items-center justify-content-between">
+      <!-- Left: Logo + Search -->
+      <div class="d-flex align-items-center gap-2">
+        <svg class="fb-logo-svg" viewBox="0 0 36 36" fill="#0866ff"><path d="M20.181 35.87C29.094 34.791 36 27.202 36 18c0-9.941-8.059-18-18-18S0 8.059 0 18c0 8.36 5.706 15.39 13.438 17.38v-12.3H8.973v-5.08h4.465V14.12c0-4.41 2.625-6.85 6.643-6.85 1.924 0 3.937.344 3.937.344v4.33h-2.219c-2.186 0-2.868 1.356-2.868 2.75v3.31h4.88l-.78 5.08h-4.1V35.87z"/><path d="M24.846 22.98l.78-5.08h-4.88v-3.31c0-1.394.682-2.75 2.868-2.75h2.219v-4.33s-2.013-.344-3.937-.344c-4.018 0-6.643 2.44-6.643 6.85v3.88H8.973v5.08h4.465v12.3c.883.136 1.785.207 2.702.207.86 0 1.705-.064 2.534-.187v-12.32h4.172z" fill="#ffffff"/></svg>
+        <div class="fb-search-wrap d-none d-sm-block">
+          <i class="bi bi-search"></i>
+          <input type="text" class="fb-search-input" placeholder="Search Facebook" aria-label="Search Facebook">
+        </div>
+      </div>
+      <!-- Center: Nav Tabs -->
+      <div class="d-flex align-items-center">
+        <button class="fb-nav-tab active" title="Home"><i class="bi bi-house-fill"></i></button>
+        <button class="fb-nav-tab" title="Videos"><i class="bi bi-play-circle-fill"></i></button>
+        <button class="fb-nav-tab" title="Marketplace"><i class="bi bi-shop"></i></button>
+        <button class="fb-nav-tab d-none d-md-flex" title="Groups"><i class="bi bi-people-fill"></i></button>
+        <button class="fb-nav-tab d-none d-lg-flex" title="Gaming"><i class="bi bi-controller"></i></button>
+      </div>
+      <!-- Right: Icons -->
+      <div class="d-flex align-items-center gap-2">
+        <button class="fb-icon-btn d-sm-none"><i class="bi bi-search"></i></button>
+        <button class="fb-icon-btn"><i class="bi bi-grid-3x3-gap-fill"></i></button>
+        <button class="fb-icon-btn position-relative">
+          <i class="bi bi-messenger"></i>
+          <span class="badge bg-danger position-absolute top-0 end-0" style="font-size:.6rem">3</span>
+        </button>
+        <button class="fb-icon-btn position-relative">
+          <i class="bi bi-bell-fill"></i>
+          <span class="badge bg-danger position-absolute top-0 end-0" style="font-size:.6rem">7</span>
+        </button>
+        <div class="fb-icon-btn" style="background: linear-gradient(135deg,#764ba2,#0d6efd); color:#fff; font-weight:700; font-size:.85rem; cursor:pointer">RF</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main 3-Column Layout -->
+  <div class="container-fluid px-0" style="max-width:1440px; margin:auto">
+    <div class="row g-0">
+
+      <!-- Left Sidebar (hidden on small) -->
+      <aside class="col-lg-3 d-none d-lg-block p-3" style="position:sticky; top:56px; height:calc(100vh - 56px); overflow-y:auto">
+        <div class="sidebar-link">
+          <div class="friend-avatar" style="background:linear-gradient(135deg,#0d6efd,#6610f2)">RF</div>
+          <span class="fw-bold">Roman Fatima</span>
+        </div>
+        <div class="sidebar-link"><span class="link-icon bg-primary bg-opacity-10"><i class="bi bi-people-fill text-primary"></i></span>Friends</div>
+        <div class="sidebar-link"><span class="link-icon bg-danger bg-opacity-10"><i class="bi bi-clock-fill text-danger"></i></span>Memories</div>
+        <div class="sidebar-link"><span class="link-icon bg-success bg-opacity-10"><i class="bi bi-bookmark-fill text-success"></i></span>Saved</div>
+        <div class="sidebar-link"><span class="link-icon" style="background:rgba(8,102,255,.1)"><i class="bi bi-people" style="color:#0866ff"></i></span>Groups</div>
+        <div class="sidebar-link"><span class="link-icon bg-warning bg-opacity-10"><i class="bi bi-play-circle-fill text-warning"></i></span>Video</div>
+        <div class="sidebar-link"><span class="link-icon bg-info bg-opacity-10"><i class="bi bi-shop text-info"></i></span>Marketplace</div>
+        <div class="sidebar-link"><span class="link-icon bg-secondary bg-opacity-10"><i class="bi bi-calendar-event text-secondary"></i></span>Events</div>
+        <hr>
+        <p class="text-muted small px-3 mb-1 fw-semibold">YOUR SHORTCUTS</p>
+        <div class="sidebar-link"><span class="link-icon bg-primary bg-opacity-10"><i class="bi bi-code-slash text-primary"></i></span>BSCS 5A — Web Dev</div>
+        <div class="sidebar-link"><span class="link-icon bg-success bg-opacity-10"><i class="bi bi-mortarboard text-success"></i></span>Air University CS Group</div>
+        <p class="text-muted small text-center mt-4" style="font-size:.72rem">Privacy · Terms · Advertising · Cookies · Meta © 2026</p>
+      </aside>
+
+      <!-- Center Feed -->
+      <main class="col-12 col-lg-6 py-3 px-2 px-md-3" style="max-width:680px; margin:0 auto">
+
+        <!-- Stories -->
+        <div class="d-flex gap-2 overflow-auto pb-2 mb-3" style="scrollbar-width:none">
+          <div class="story-card story-add">
+            <div class="add-icon"><i class="bi bi-plus-lg"></i></div>
+            <div class="story-name text-center">Create Story</div>
+          </div>
+          <div class="story-card" style="background:linear-gradient(135deg,#f093fb,#f5576c)">
+            <div class="story-avatar" style="background:#fff; color:#f5576c; border-color:#f5576c">I</div>
+            <div class="story-name">Insha</div>
+          </div>
+          <div class="story-card" style="background:linear-gradient(135deg,#4facfe,#00f2fe)">
+            <div class="story-avatar" style="background:#fff; color:#4facfe; border-color:#4facfe">A</div>
+            <div class="story-name">Aniqa</div>
+          </div>
+          <div class="story-card" style="background:linear-gradient(135deg,#43e97b,#38f9d7)">
+            <div class="story-avatar" style="background:#fff; color:#43e97b; border-color:#43e97b">S</div>
+            <div class="story-name">Sana</div>
+          </div>
+          <div class="story-card" style="background:linear-gradient(135deg,#fa709a,#fee140)">
+            <div class="story-avatar" style="background:#fff; color:#fa709a; border-color:#fa709a">W</div>
+            <div class="story-name">Wania</div>
+          </div>
+          <div class="story-card" style="background:linear-gradient(135deg,#a18cd1,#fbc2eb)">
+            <div class="story-avatar" style="background:#fff; color:#a18cd1; border-color:#a18cd1">R</div>
+            <div class="story-name">Rida</div>
+          </div>
+        </div>
+
+        <!-- Post Composer -->
+        <div class="post-composer mb-3">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <div class="post-avatar">RF</div>
+            <input type="text" class="post-input" placeholder="What's on your mind, Roman?" readonly
+              data-bs-toggle="modal" data-bs-target="#createPostModal" style="cursor:pointer">
+          </div>
+          <hr class="my-2">
+          <div class="d-flex justify-content-around">
+            <button class="post-action-btn"><i class="bi bi-camera-video-fill text-danger fs-5"></i> Live Video</button>
+            <button class="post-action-btn"><i class="bi bi-image-fill text-success fs-5"></i> Photo/Video</button>
+            <button class="post-action-btn"><i class="bi bi-emoji-smile-fill text-warning fs-5"></i> Feeling</button>
+          </div>
+        </div>
+
+        <!-- Feed Posts -->
+
+        <!-- Post 1 -->
+        <div class="post-card">
+          <div class="d-flex align-items-start gap-2 p-3">
+            <div class="post-avatar" style="background:linear-gradient(135deg,#f093fb,#f5576c)">I</div>
+            <div class="flex-grow-1">
+              <div class="fw-bold" style="font-size:.95rem">Insha Mehmood</div>
+              <div class="text-muted small">2 hours ago · <i class="bi bi-globe2"></i></div>
+            </div>
+            <button class="btn btn-sm text-muted"><i class="bi bi-three-dots"></i></button>
+          </div>
+          <p class="px-3 pb-2" style="font-size:.95rem">Finally submitted our Web Development Lab 2 assignments! 🎉 All 6 tasks done using Bootstrap 5. So proud of the team! 💻✨ <span class="text-primary">#BSCS5A #AirUniversity #WebDev</span></p>
+          <div class="fake-img" style="background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%)">💻🎓</div>
+          <div class="px-3 py-2 d-flex justify-content-between align-items-center border-bottom" style="font-size:.85rem; color:#65676b">
+            <div class="post-reactions">
+              <span>👍</span><span>❤️</span><span>😂</span>
+              <span class="ms-1">247</span>
+            </div>
+            <div>28 Comments · 12 Shares</div>
+          </div>
+          <div class="post-action-bar d-flex p-1" role="group">
+            <button onclick="this.innerHTML='<i class=\'bi bi-hand-thumbs-up-fill text-primary\'></i> Like'"><i class="bi bi-hand-thumbs-up"></i> Like</button>
+            <button data-bs-toggle="modal" data-bs-target="#commentModal"><i class="bi bi-chat"></i> Comment</button>
+            <button><i class="bi bi-share"></i> Share</button>
+          </div>
+        </div>
+
+        <!-- Post 2 -->
+        <div class="post-card">
+          <div class="d-flex align-items-start gap-2 p-3">
+            <div class="post-avatar" style="background:linear-gradient(135deg,#4facfe,#00f2fe)">A</div>
+            <div class="flex-grow-1">
+              <div class="fw-bold" style="font-size:.95rem">Aniqa Zafar</div>
+              <div class="text-muted small">5 hours ago · <i class="bi bi-people-fill"></i> BSCS 5A</div>
+            </div>
+            <button class="btn btn-sm text-muted"><i class="bi bi-three-dots"></i></button>
+          </div>
+          <p class="px-3 pb-2" style="font-size:.95rem">Our CSS custom UI (Task 4) got the highest marks! The AetherOS theme switcher was a huge hit 🌌💜 Bootstrap version looks even better now!</p>
+          <div class="px-3 pb-2">
+            <div class="rounded-3 p-3" style="background:#f0f2f5">
+              <div class="fw-bold small">AetherOS — Advanced CSS Concept Showcase</div>
+              <div class="text-muted" style="font-size:.8rem">Interactive UI with 3D transforms, glassmorphism &amp; dynamic themes</div>
+            </div>
+          </div>
+          <div class="px-3 py-2 d-flex justify-content-between align-items-center border-bottom" style="font-size:.85rem; color:#65676b">
+            <div class="post-reactions"><span>👍</span><span>❤️</span><span class="ms-1">183</span></div>
+            <div>14 Comments</div>
+          </div>
+          <div class="post-action-bar d-flex p-1">
+            <button onclick="this.innerHTML='<i class=\'bi bi-hand-thumbs-up-fill text-primary\'></i> Like'"><i class="bi bi-hand-thumbs-up"></i> Like</button>
+            <button data-bs-toggle="modal" data-bs-target="#commentModal"><i class="bi bi-chat"></i> Comment</button>
+            <button><i class="bi bi-share"></i> Share</button>
+          </div>
+        </div>
+
+        <!-- Post 3 — Roman's Post -->
+        <div class="post-card border border-primary border-2">
+          <div class="d-flex align-items-start gap-2 p-3">
+            <div class="post-avatar">RF</div>
+            <div class="flex-grow-1">
+              <div class="fw-bold" style="font-size:.95rem">Roman Fatima <span class="badge bg-primary ms-1" style="font-size:.6rem">You</span></div>
+              <div class="text-muted small">Just now · <i class="bi bi-globe2"></i></div>
+            </div>
+          </div>
+          <p class="px-3 pb-2" style="font-size:.95rem">Lab 2 complete! 🚀 Built 6 Bootstrap 5 web projects for my Web Dev course. E-commerce store with cart, checkout, login &amp; signup — all done! 🛍️💻 <span class="text-primary">#Bootstrap5 #WebDev #Lab2 #241878</span></p>
+          <div class="fake-img" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)">🚀💻</div>
+          <div class="px-3 py-2 d-flex justify-content-between align-items-center border-bottom" style="font-size:.85rem; color:#65676b">
+            <div class="post-reactions"><span>👍</span><span>❤️</span><span>🎉</span><span class="ms-1">312</span></div>
+            <div>41 Comments · 27 Shares</div>
+          </div>
+          <div class="post-action-bar d-flex p-1">
+            <button onclick="this.innerHTML='<i class=\'bi bi-hand-thumbs-up-fill text-primary\'></i> Like'"><i class="bi bi-hand-thumbs-up"></i> Like</button>
+            <button data-bs-toggle="modal" data-bs-target="#commentModal"><i class="bi bi-chat"></i> Comment</button>
+            <button><i class="bi bi-share"></i> Share</button>
+          </div>
+        </div>
+
+        <!-- Post 4 -->
+        <div class="post-card">
+          <div class="d-flex align-items-start gap-2 p-3">
+            <div class="post-avatar" style="background:linear-gradient(135deg,#43e97b,#38f9d7)">S</div>
+            <div class="flex-grow-1">
+              <div class="fw-bold" style="font-size:.95rem">Sana Riaz</div>
+              <div class="text-muted small">Yesterday · <i class="bi bi-globe2"></i></div>
+            </div>
+            <button class="btn btn-sm text-muted"><i class="bi bi-three-dots"></i></button>
+          </div>
+          <p class="px-3 pb-2" style="font-size:.95rem">Finished the IEEE paper template (Task 5)! Two-column LaTeX-style layout in pure HTML &amp; CSS. Dr. Tariq was impressed! 📄✅</p>
+          <div class="px-3 py-2 d-flex justify-content-between align-items-center border-bottom" style="font-size:.85rem; color:#65676b">
+            <div class="post-reactions"><span>👍</span><span>❤️</span><span class="ms-1">96</span></div>
+            <div>8 Comments</div>
+          </div>
+          <div class="post-action-bar d-flex p-1">
+            <button onclick="this.innerHTML='<i class=\'bi bi-hand-thumbs-up-fill text-primary\'></i> Like'"><i class="bi bi-hand-thumbs-up"></i> Like</button>
+            <button data-bs-toggle="modal" data-bs-target="#commentModal"><i class="bi bi-chat"></i> Comment</button>
+            <button><i class="bi bi-share"></i> Share</button>
+          </div>
+        </div>
+
+      </main>
+
+      <!-- Right Sidebar -->
+      <aside class="col-lg-3 d-none d-lg-block p-3" style="position:sticky; top:56px; height:calc(100vh - 56px); overflow-y:auto">
+        <p class="fw-bold mb-2" style="font-size:.95rem; color:#050505">Birthdays</p>
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <i class="bi bi-gift-fill text-danger fs-4"></i>
+          <span class="small"><strong>Wania Khan</strong> and <strong>2 others</strong> have birthdays today.</span>
+        </div>
+        <hr>
+        <p class="fw-bold mb-2" style="font-size:.95rem; color:#050505">Contacts</p>
+        <div class="friend-row mb-1">
+          <div class="friend-avatar" style="background:#f5576c">I<span class="online-dot"></span></div>
+          <span class="small fw-semibold">Insha Mehmood</span>
+        </div>
+        <div class="friend-row mb-1">
+          <div class="friend-avatar" style="background:#4facfe">A<span class="online-dot"></span></div>
+          <span class="small fw-semibold">Aniqa Zafar</span>
+        </div>
+        <div class="friend-row mb-1">
+          <div class="friend-avatar" style="background:#43e97b">S</div>
+          <span class="small fw-semibold text-muted">Sana Riaz</span>
+        </div>
+        <div class="friend-row mb-1">
+          <div class="friend-avatar" style="background:#fa709a">W<span class="online-dot"></span></div>
+          <span class="small fw-semibold">Wania Khan</span>
+        </div>
+        <div class="friend-row mb-1">
+          <div class="friend-avatar" style="background:#a18cd1">R</div>
+          <span class="small fw-semibold text-muted">Rida Alam</span>
+        </div>
+        <div class="friend-row mb-1">
+          <div class="friend-avatar" style="background:#fd7e14">Z<span class="online-dot"></span></div>
+          <span class="small fw-semibold">Zainab Shah</span>
+        </div>
+        <div class="friend-row mb-1">
+          <div class="friend-avatar" style="background:#0d6efd">M<span class="online-dot"></span></div>
+          <span class="small fw-semibold">Maryam Qasim</span>
+        </div>
+        <hr>
+        <p class="fw-bold mb-2" style="font-size:.95rem">Group Conversations</p>
+        <div class="friend-row mb-1">
+          <div class="friend-avatar" style="background:#198754; border-radius:8px">BC</div>
+          <div><div class="small fw-semibold">BSCS 5A Class Chat</div><div class="text-muted" style="font-size:.75rem">Roman: just pushed all 6 tasks...</div></div>
+        </div>
+        <div class="friend-row mb-1">
+          <div class="friend-avatar" style="background:#9c27b0; border-radius:8px">WD</div>
+          <div><div class="small fw-semibold">Web Dev Lab Group</div><div class="text-muted" style="font-size:.75rem">Insha: Task 6 looks amazing 🔥</div></div>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+
+  <!-- Messenger Dock -->
+  <div class="messenger-dock">
+    <button class="messenger-btn" title="Messenger"><i class="bi bi-messenger"></i></button>
+  </div>
+
+  <!-- Create Post Modal -->
+  <div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header border-bottom">
+          <h5 class="modal-title fw-bold" id="createPostModalLabel">Create Post</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <div class="post-avatar">RF</div>
+            <div>
+              <div class="fw-bold">Roman Fatima</div>
+              <select class="form-select form-select-sm" style="width:auto">
+                <option>🌐 Public</option>
+                <option>👫 Friends</option>
+                <option>🔒 Only Me</option>
+              </select>
+            </div>
+          </div>
+          <textarea class="form-control border-0 fs-5" rows="4" placeholder="What's on your mind, Roman?" style="resize:none"></textarea>
+          <div class="border rounded-3 p-2 d-flex justify-content-between align-items-center mt-3">
+            <span class="small fw-semibold">Add to your post</span>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-light"><i class="bi bi-image-fill text-success"></i></button>
+              <button class="btn btn-sm btn-light"><i class="bi bi-person-fill-add text-primary"></i></button>
+              <button class="btn btn-sm btn-light"><i class="bi bi-emoji-smile-fill text-warning"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary w-100 fw-bold" data-bs-dismiss="modal">Post</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comment Modal -->
+  <div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold" id="commentModalLabel">Comments</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" style="max-height:300px; overflow-y:auto">
+          <div class="d-flex gap-2 mb-3">
+            <div class="post-avatar" style="background:#f5576c; width:32px; height:32px; font-size:.8rem; flex-shrink:0">I</div>
+            <div class="bg-light rounded-3 p-2 flex-grow-1">
+              <div class="fw-semibold" style="font-size:.85rem">Insha Mehmood</div>
+              <div style="font-size:.9rem">Amazing work Roman! 🔥</div>
+            </div>
+          </div>
+          <div class="d-flex gap-2 mb-3">
+            <div class="post-avatar" style="background:#4facfe; width:32px; height:32px; font-size:.8rem; flex-shrink:0">A</div>
+            <div class="bg-light rounded-3 p-2 flex-grow-1">
+              <div class="fw-semibold" style="font-size:.85rem">Aniqa Zafar</div>
+              <div style="font-size:.9rem">Bootstrap 5 makes it so clean! 💅</div>
+            </div>
+          </div>
+          <div class="d-flex gap-2 mb-3">
+            <div class="post-avatar" style="background:#43e97b; width:32px; height:32px; font-size:.8rem; flex-shrink:0">S</div>
+            <div class="bg-light rounded-3 p-2 flex-grow-1">
+              <div class="fw-semibold" style="font-size:.85rem">Sana Riaz</div>
+              <div style="font-size:.9rem">Task 6 e-commerce store is 🔥🔥🔥</div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer p-2">
+          <div class="d-flex gap-2 w-100">
+            <div class="post-avatar" style="width:32px; height:32px; font-size:.8rem; flex-shrink:0">RF</div>
+            <input type="text" class="form-control rounded-pill" placeholder="Write a comment...">
+            <button class="btn btn-primary rounded-circle" style="width:36px; height:36px; padding:0"><i class="bi bi-send-fill"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Modular Architecture: Services -> Controllers -> Modules -->
+  <script src="services/feed.service.js"></script>
+  <script src="services/story.service.js"></script>
+  <script src="services/chat.service.js"></script>
+
+  <script src="controllers/feed.controller.js"></script>
+  <script src="controllers/story.controller.js"></script>
+  <script src="controllers/chat.controller.js"></script>
+
+  <script src="modules/facebook.module.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
